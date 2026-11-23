@@ -13,7 +13,7 @@
 
 - [`analyst`](.codex/agents/analyst.toml) — анализирует требования, бизнес-логику, предметную область и задачи.
 - [`architector`](.codex/agents/architector.toml) — проектирует архитектуру системы, определяет технические решения и стандарты разработки.
-- [`planner`](.codex/agents/planner.toml) — изучает репозиторий и ведёт план в `tickets/<ID>-<slug>/PLAN.md` для нового проекта и feature-задач; для обычного bugfix оркестратор подключает его отдельно, если исправление крупное, затрагивает несколько модулей или требует нескольких этапов.
+- [`planner`](.codex/agents/planner.toml) — изучает репозиторий и ведёт план для нового проекта и feature-задач.
 - [`frontend-developer`](.codex/agents/frontend-developer.toml) — разрабатывает клиентскую часть приложения, интерфейсы и интеграцию с API.
 - [`backend-developer`](.codex/agents/backend-developer.toml) — разрабатывает серверную логику, API и интеграции.
 - [`database-developer`](.codex/agents/database-developer.toml) — проектирует структуру БД, пишет миграции и оптимизирует SQL-запросы.
