@@ -13,6 +13,7 @@
 
 - [`analyst`](.codex/agents/analyst.toml) — анализирует требования, бизнес-логику, предметную область и задачи.
 - [`architector`](.codex/agents/architector.toml) — проектирует архитектуру системы, определяет технические решения и стандарты разработки.
+- [`planner`](.codex/agents/planner.toml) — изучает репозиторий и ведёт план в `tickets/<ID>-<slug>/PLAN.md` для нового проекта и feature-задач; для обычного bugfix оркестратор подключает его отдельно, если исправление крупное, затрагивает несколько модулей или требует нескольких этапов.
 - [`frontend-developer`](.codex/agents/frontend-developer.toml) — разрабатывает клиентскую часть приложения, интерфейсы и интеграцию с API.
 - [`backend-developer`](.codex/agents/backend-developer.toml) — разрабатывает серверную логику, API и интеграции.
 - [`database-developer`](.codex/agents/database-developer.toml) — проектирует структуру БД, пишет миграции и оптимизирует SQL-запросы.
@@ -49,6 +50,7 @@
 - **`docs/CODE_REVIEW.md`** — критерии ревью изменений; ведёт `code-reviewer`.
 - **`prototypes/<ID>-<slug>/README.md`** — описание экранов, действий, состояний и допущений для UX/UI-прототипа, если его удобно оформить в Markdown; готовит `ux-ui-expert`.
 - **`tickets/<ID>-<slug>/TASK.md`** — исходный запрос и контекст каждой задачи; создаёт оркестратор.
+- **`tickets/<ID>-<slug>/PLAN.md`** — этапы, зависимости и фактический прогресс по плану задачи; готовит и обновляет `planner` на основе подтверждённых результатов исполнителей.
 - **`tickets/<ID>-<slug>/ANALYSIS.md`** — анализ требований и предметной области; готовит `analyst`.
 - **`tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`** — сценарии, тесты, команды и результаты unit-проверок; готовит `unit-tester`.
 - **`tickets/<ID>-<slug>/UI_TEST_REPORT.md`** — сценарии, тесты, команды и результаты UI/E2E-проверок; готовит `ui-tester`.
