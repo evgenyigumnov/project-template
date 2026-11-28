@@ -1,49 +1,49 @@
-# Безопасность
+# Security
 
-Владелец требований и документа — `security-engineer`. Разработчики и devops соблюдают эти правила в коде, конфигурации и инфраструктуре.
+`security-engineer` owns these requirements and this document. Developers and devops must follow these rules in code, configuration, and infrastructure.
 
-## Авторизация и доступ
+## Authentication and Access
 
-- Проверяй права доступа на серверной стороне для каждой защищённой операции.
-- Применяй наименьшие необходимые привилегии и не считай скрытый UI защитой ресурса.
-- Не ослабляй аутентификацию или авторизацию для обхода ошибки либо упрощения тестирования.
-- Для операций с данными проверяй, что субъект имеет доступ именно к запрошенному объекту и контексту (например, организации или проекту), а не только прошёл аутентификацию.
-- Для новой или существенно изменённой аутентификации, авторизации, границы доверия либо публичной поверхности сервиса подключай `security-engineer` до завершения задачи. Зафиксируй угрозы, решения и остаточные риски в задаче или соответствующем профильном документе.
+- Verify access rights on the server side for every protected operation.
+- Apply the principle of least privilege, and do not treat a hidden UI as protection for a resource.
+- Do not weaken authentication or authorization to work around an error or simplify testing.
+- For data operations, verify that the subject has access to the specific requested object and context (for example, an organization or project), rather than merely being authenticated.
+- For new or substantially changed authentication, authorization, trust boundaries, or public service surfaces, involve `security-engineer` before completing the task. Record threats, decisions, and residual risks in the task or the relevant specialist document.
 
-## Учётные данные и сессии
+## Credentials and Sessions
 
-- Не поставляй общие, предсказуемые или встроенные учётные данные для входа в окружение, доступное пользователям. Демонстрационные пользователи и начальные пароли допустимы только для локальной разработки или изолированных тестов, должны включаться явно и не должны включаться в production-конфигурации по умолчанию. Запуск с такими настройками в production должен завершаться безопасным отказом.
-- Для паролей используй поддерживаемый проектом алгоритм хранения учётных данных; не разрабатывай собственные схемы хеширования и не храни пароли обратимо.
-- До реализации сессий или токенов определи и задокументируй их срок действия, область действия, отзыв и место хранения. Для клиентских приложений оцени последствия XSS и CSRF. Не храни долгоживущие секреты в доступном скриптам хранилище без обоснования и компенсирующих мер.
-- Если механизм использует cookie, настрой доступные для него защитные атрибуты и проверку происхождения запросов; если использует другой механизм, опиши эквивалентные меры для выбранной модели угроз. Не считай один способ хранения универсально безопасным для всех приложений.
+- Do not ship shared, predictable, or built-in login credentials for environments available to users. Demo users and initial passwords are permitted only for local development or isolated tests; they must be explicitly enabled and must not be enabled by default in production configurations. Starting in production with such settings must fail safely.
+- Use a credential-storage algorithm supported by the project for passwords; do not develop custom hashing schemes or store passwords in a reversible form.
+- Before implementing sessions or tokens, define and document their expiration, scope, revocation, and storage location. For client applications, assess the consequences of XSS and CSRF. Do not store long-lived secrets in storage accessible to scripts without justification and compensating controls.
+- If the mechanism uses cookies, configure the security attributes available for them and check request origins; if it uses another mechanism, describe equivalent controls for the selected threat model. Do not treat any single storage method as universally safe for all applications.
 
-## Секреты и чувствительные данные
+## Secrets and Sensitive Data
 
-- Не добавляй токены, пароли, приватные ключи и другие секреты в исходный код, тестовые данные, логи или историю репозитория.
-- Используй утверждённый проектом механизм хранения секретов; конкретный механизм фиксируй после выбора.
-- Не возвращай и не логируй чувствительные данные без обоснованной необходимости.
-- Разделяй конфигурацию разработки, тестов и развёрнутых окружений. Не допускай незаметного переключения на слабые значения, тестовые ключи или разрешающие режимы при отсутствии обязательной конфигурации.
+- Do not add tokens, passwords, private keys, or other secrets to source code, test data, logs, or repository history.
+- Use the secret-storage mechanism approved by the project; document the specific mechanism after it has been selected.
+- Do not return or log sensitive data without a justified need.
+- Separate development, test, and deployed-environment configuration. Do not allow a silent fallback to weak values, test keys, or permissive modes when required configuration is missing.
 
-## Безопасная обработка данных
+## Secure Data Handling
 
-- Определи границы доверия и проверяй недоверенный ввод на каждой границе, где он становится доверенным. Проверяй формат и смысл данных, применяй разрешающие правила там, где они подходят, и повторяй критичные проверки на стороне, отвечающей за защиту ресурса.
-- Устанавливай разумные верхние пределы для размера и количества входных данных, времени обработки, загрузок и выборок. Выбирай значения по требованиям продукта и фиксируй их там, где описан контракт; не полагайся только на клиентские ограничения.
-- Используй безопасные средства работы с базой данных, файлами и внешними запросами. Не раскрывай внутренние ошибки клиенту и не включай чувствительные значения в диагностические сообщения.
-- Защищай аутентификацию и ресурсоёмкие операции от перебора и чрезмерного использования подходящими ограничениями частоты, квотами или другими контролями. Учитывай идентичность, источник и последствия блокировки легитимных пользователей.
-- Если ограничение хранит состояние в памяти процесса, явно укажи, что оно действует только для этого процесса. Для нескольких процессов или экземпляров используй общий механизм либо другое решение, которое обеспечивает заявленный предел; не представляй локальное ограничение как защиту всего сервиса.
+- Define trust boundaries and validate untrusted input at every boundary where it becomes trusted. Check data format and meaning, use allowlists where appropriate, and repeat critical checks on the side responsible for protecting the resource.
+- Set reasonable upper limits for input size and quantity, processing time, uploads, and query results. Choose values based on product requirements and document them where the contract is described; do not rely only on client-side limits.
+- Use safe methods for working with databases, files, and external requests. Do not expose internal errors to the client or include sensitive values in diagnostic messages.
+- Protect authentication and resource-intensive operations from brute-force attempts and excessive use with appropriate rate limits, quotas, or other controls. Consider identity, source, and the consequences of blocking legitimate users.
+- If a limit stores state in process memory, explicitly state that it applies only to that process. For multiple processes or instances, use a shared mechanism or another solution that enforces the stated limit; do not present a local limit as protection for the entire service.
 
-## Проверки безопасности
+## Security Checks
 
-- Для затронутых сценариев проверяй успешный доступ, отказ в доступе, обход через чужой объект или контекст, некорректные и чрезмерные входные данные, а также злоупотребление там, где это применимо. Регрессионные проверки должны подтверждать, что защиту нельзя обойти через соседний путь.
-- Используй доступные в выбранном стеке проверки исходного кода, конфигурации и сторонних зависимостей. Зафиксируй применённые инструменты и результаты; если подходящей автоматической проверки нет или она не запускалась, укажи причину и непроверенный риск. Не требуй один конкретный сканер для всех технологий.
-- Перед production-кандидатом проверь, что конфигурация окружения не включает demo-учётные данные и тестовые ключи, секреты передаются принятым безопасным способом, транспорт и управление сессиями соответствуют модели угроз, а ограничения злоупотреблений работают в предполагаемом масштабе развёртывания.
+- For affected scenarios, check successful access, denied access, bypass through another user's object or context, invalid and excessive input, and abuse where applicable. Regression checks must confirm that protection cannot be bypassed through an adjacent path.
+- Use the source-code, configuration, and third-party dependency checks available for the selected stack. Record the tools used and their results; if no suitable automated check exists or it was not run, state the reason and the unchecked risk. Do not require one specific scanner for every technology.
+- Before a production candidate, verify that the environment configuration does not enable demo credentials or test keys, secrets are passed using the accepted secure method, transport and session management match the threat model, and abuse controls work at the anticipated deployment scale.
 
-## Запрещённые операции
+## Prohibited Operations
 
-- Не отключай защитные проверки, TLS-проверки или контроль доступа ради удобства.
-- Не выполняй destructive-операции с данными и не применяй изменения к живой инфраструктуре без прямого поручения и согласованного плана.
-- Не проверяй уязвимости на системах, для которых нет явного разрешения на тестирование.
+- Do not disable security checks, TLS verification, or access control for convenience.
+- Do not perform destructive data operations or apply changes to live infrastructure without a direct instruction and an agreed plan.
+- Do not test for vulnerabilities on systems for which there is no explicit authorization to test.
 
-## Сообщение об уязвимостях
+## Vulnerability Reporting
 
-Передавай подтверждённые находки главному агенту и владельцу затронутой области. В `tickets/<номер>/SECURITY_REVIEW.md` фиксируй серьёзность, путь и строку, условия эксплуатации, влияние и рекомендуемое исправление; не включай реальные секреты.
+Send confirmed findings to the main agent and the owner of the affected area. In `tickets/<number>/SECURITY_REVIEW.md`, record severity, path and line, exploitation conditions, impact, and the recommended fix; do not include actual secrets.

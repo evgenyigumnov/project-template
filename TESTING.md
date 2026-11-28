@@ -1,42 +1,42 @@
-# Стратегия тестирования
+# Testing Strategy
 
-`unit-tester` отвечает за создание и поддержку unit-тестов, проверку полноты покрытия и запуск полного применимого набора. Разработчики отвечают за production-код и передают тестировщику изменённые пути, ожидаемое поведение и важные сценарии. Раздел UI/E2E поддерживает `ui-tester`. Тестирование — обязательная часть завершения любой задачи, меняющей поведение приложения.
+`unit-tester` is responsible for creating and maintaining unit tests, checking coverage completeness, and running the full applicable suite. Developers are responsible for production code and provide the tester with changed paths, expected behavior, and important scenarios. The UI/E2E section is maintained by `ui-tester`. Testing is a required part of completing any task that changes application behavior.
 
-## Обязательные правила
+## Required Rules
 
-- Для каждого изменения поведения `unit-tester` создаёт или дополняет автоматизированные unit-тесты изменённой логики. Это относится к frontend, backend, API и исправлениям ошибок. Разработчики не создают новые unit-тесты в рамках своей реализации.
-- После реализации разработчик передаёт `unit-tester` список изменённых путей, ожидаемое поведение, позитивные, негативные и граничные сценарии, а также точку запуска и доступные команды тестирования. Если разработчик обнаружил проблему или тестовые ограничения во время локальной проверки, он сообщает об этом тестировщику и оркестратору.
-- Разработчик может изменить существующий unit-тест только по согласованию с `unit-tester`, когда подтверждено, что тест стал несовместим с согласованным изменением контракта (например, изменились допустимый формат или публичное поведение). Такое изменение ограничивается сохранением актуальности существующей проверки; оно не заменяет тесты новой или изменённой логики. `unit-tester` проверяет это изменение и запускает набор повторно. Если тест выявил дефект production-кода, разработчик исправляет production-код, а не подменяет ожидаемое поведение в тесте.
-- Для любого изменения видимого поведения, экрана, действия, состояния или пользовательского потока дополнительно создаются или обновляются UI/E2E-тесты. Их пишет и запускает `ui-tester` после реализации изменения.
-- Тесты добавляются в рамках той же задачи, а не откладываются на отдельную будущую задачу. Оркестратор подключает `unit-tester` к каждой задаче с изменением поведения и `ui-tester` — к каждой задаче, меняющей видимое поведение или пользовательский поток.
-- Если в проекте ещё нет соответствующего test runner или тестовой команды, это не основание пропустить тесты. `unit-tester` или `ui-tester` описывает минимальную подходящую настройку и передаёт её оркестратору; оркестратор поручает её владельцу конфигурации и возобновляет тестирование после настройки.
-- Разделяй тесты по уровню: unit проверяет изолированную логику, интеграционные/API — взаимодействие компонентов, UI/E2E — пользовательские действия и видимые состояния. Один уровень не заменяет другой, когда задача затрагивает оба.
-- Проверяй позитивные, негативные и граничные случаи; для исправлений добавляй регрессионную проверку.
-- Не ослабляй и не удаляй проверки ради успешного прогона.
+- For every behavior change, `unit-tester` creates or extends automated unit tests for the changed logic. This applies to frontend, backend, API, and bug-fix work. Developers do not create new unit tests as part of their implementation.
+- After implementation, the developer gives `unit-tester` the list of changed paths, expected behavior, positive, negative, and boundary scenarios, as well as the test entry point and available test commands. If the developer finds an issue or testing limitation during local verification, they report it to the tester and the orchestrator.
+- A developer may change an existing unit test only in agreement with `unit-tester`, when it has been confirmed that the test became incompatible with an agreed contract change (for example, an allowed format or public behavior changed). Such a change is limited to keeping the existing check current; it does not replace tests for new or changed logic. `unit-tester` reviews the change and reruns the suite. If a test reveals a defect in production code, the developer fixes the production code instead of changing the expected behavior in the test.
+- For any change to visible behavior, a screen, an action, a state, or a user flow, UI/E2E tests are also created or updated. `ui-tester` writes and runs them after the change is implemented.
+- Tests are added as part of the same task, not deferred to a separate future task. The orchestrator assigns `unit-tester` to every task that changes behavior and `ui-tester` to every task that changes visible behavior or a user flow.
+- If the project does not yet have the relevant test runner or test command, this is not a reason to skip tests. `unit-tester` or `ui-tester` describes the smallest suitable setup and passes it to the orchestrator; the orchestrator assigns it to the configuration owner and resumes testing after setup.
+- Separate tests by level: unit tests check isolated logic, integration/API tests check interactions between components, and UI/E2E tests check user actions and visible states. One level does not replace another when a task affects both.
+- Check positive, negative, and boundary cases; add a regression check for bug fixes.
+- Do not weaken or remove checks to make a run pass.
 
-## Уровни проверок
+## Verification Levels
 
-- **Unit** — поведение изолированных функций и модулей; обязательны для каждого изменения поведения. `unit-tester` создаёт и обновляет тесты, проверяет позитивные, негативные, граничные и регрессионные сценарии и запускает полный набор. Разработчик изменённого стека сообщает требования к поведению и помогает устранить обнаруженный дефект production-кода; он не отвечает за авторство нового unit-покрытия.
-- **Интеграционные/API** — взаимодействие компонентов и API-контрактов; обязательны, когда задача меняет это взаимодействие. Оркестратор назначает владельца проверки с учётом затронутого стека. Это отдельный уровень, он не переносит ответственность за новые unit-тесты с `unit-tester` на разработчика.
-- **UI/E2E** — видимые экраны, действия, состояния, ошибки и пользовательские потоки; обязательны при любом изменении поведения, которое видит пользователь. Владелец — `ui-tester`.
-- Дополнительные проверки, например статический анализ безопасности, назначаются по риску задачи и наличию подходящих инструментов.
+- **Unit** — behavior of isolated functions and modules; required for every behavior change. `unit-tester` creates and updates tests, checks positive, negative, boundary, and regression scenarios, and runs the full suite. The developer for the changed stack communicates behavioral requirements and helps fix any production-code defect that is found; they are not responsible for authoring new unit coverage.
+- **Integration/API** — interactions between components and API contracts; required when a task changes these interactions. The orchestrator assigns an owner for the checks based on the affected stack. This is a separate level and does not transfer responsibility for new unit tests from `unit-tester` to the developer.
+- **UI/E2E** — visible screens, actions, states, errors, and user flows; required for any behavior change visible to the user. The owner is `ui-tester`.
+- Additional checks, such as static security analysis, are assigned according to the task's risk and the availability of suitable tools.
 
-## Инструменты и команды
+## Tools and Commands
 
-- Перед выбором команды изучи фактическую структуру приложения, тестовые конфигурации и доступные скрипты. Не предполагай названия каталогов, runner-ов и команд.
-- Если test runner уже настроен, используй его. Если он отсутствует, сначала подготовь конкретный минимальный план настройки для фактического стека и передай его оркестратору; тесты нельзя считать выполненными до настройки и прогона.
-- `unit-tester` запускает полный применимый набор unit-тестов проекта, а не только новые или затронутые тесты. В отчёте указывай точные команды, итоговый код завершения, предупреждения и ограничения среды.
-- Команды проекта и требования к покрытию пока не заданы. Фиксируй подтверждённые команды и пороги в этом документе после появления соответствующей конфигурации; не выдумывай универсальный процент покрытия. Оценивай полноту по требованиям и рискам конкретной логики, а не только по числу тестов или общему проценту.
+- Before choosing a command, study the actual application structure, test configuration, and available scripts. Do not assume directory, runner, or command names.
+- If a test runner is already configured, use it. If there is none, first prepare a specific minimal setup plan for the actual stack and pass it to the orchestrator; tests cannot be considered complete until setup and a test run have taken place.
+- `unit-tester` runs the project's full applicable unit-test suite, not just new or affected tests. In the report, provide the exact commands, final exit code, warnings, and environment limitations.
+- Project commands and coverage requirements have not yet been defined. Record confirmed commands and thresholds in this document when the relevant configuration is added; do not invent a universal coverage percentage. Evaluate completeness against the requirements and risks of the specific logic, not just the number of tests or overall percentage.
 
-## Обязательный отчёт и критерий завершения
+## Required Report and Completion Criteria
 
-Для задачи с изменением поведения `unit-tester` передаёт оркестратору отчёт в `tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`. Для задачи с UI/E2E-проверкой `ui-tester` передаёт отчёт в `tickets/<ID>-<slug>/UI_TEST_REPORT.md`. Если для проекта действует другое согласованное расположение тикет-папки, используй его.
+For a task that changes behavior, `unit-tester` provides the orchestrator with a report in `tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`. For a task with UI/E2E checks, `ui-tester` provides a report in `tickets/<ID>-<slug>/UI_TEST_REPORT.md`. If the project uses another agreed location for its ticket folder, use that location.
 
-Каждый отчёт содержит:
+Each report contains:
 
-- проверенные сценарии и созданные/изменённые тестовые файлы;
-- точные команды и фактические результаты их выполнения;
-- предупреждения и ограничения среды;
-- непокрытые сценарии, дефекты и блокеры; если пробелов нет — явно укажи это.
+- scenarios checked and test files created or changed;
+- exact commands and their actual results;
+- warnings and environment limitations;
+- uncovered scenarios, defects, and blockers; explicitly state if there are no gaps.
 
-Оркестратор не закрывает задачу как завершённую и проверенную, пока не получил все применимые отчёты и тесты не прошли. Если тесты нельзя создать или запустить, `unit-tester` фиксирует конкретную причину, непокрытые сценарии и владельца следующего шага; статус проверки остаётся заблокированным/непройденным, а не успешным.
+The orchestrator does not close a task as completed and verified until all applicable reports have been received and the tests have passed. If tests cannot be created or run, `unit-tester` records the specific reason, uncovered scenarios, and owner of the next step; the verification status remains blocked or failed, not successful.

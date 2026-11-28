@@ -1,35 +1,35 @@
-# Правила разработки
+# Development Guidelines
 
-Документ задаёт общий порядок работы с изменениями. Подробные соглашения по коду, тестированию, развёртыванию и безопасности описаны в `CONVENTIONS.md`, `TESTING.md`, `DEPLOYMENT.md` и `SECURITY.md`.
+This document defines the general workflow for making changes. Detailed conventions for code, testing, deployment, and security are described in `CONVENTIONS.md`, `TESTING.md`, `DEPLOYMENT.md`, and `SECURITY.md`.
 
-Владелец правил PR и code review — `code-reviewer`.
+`code-reviewer` owns the PR and code review rules.
 
-## Подготовка изменений
+## Preparing Changes
 
-- Перед началом изучи задачу, связанные требования и профильные документы. Папку задачи и `TASK.md` создай до делегирования и редактирования по правилам `AGENTS.md` и `tickets/README.md`.
-- Ограничивай изменение областью задачи и согласованными зонами ответственности.
-- Для большой задачи формулируй последовательные этапы и передавай результат каждого этапа следующему исполнителю.
-- Если затронуты API, схема данных, безопасность или инфраструктура, подключай соответствующего владельца.
-- Для каждой задачи, меняющей код или поведение приложения, подключай `technical-writer` как обязательный этап; для задач о контрактах, эксплуатации и пользовательских сценариях также оценивай влияние на инструкции и справку. Он получает подтверждённые требования и факты реализации, обновляет подходящие материалы или фиксирует в отчёте, почему правки не нужны. Для задачи только о документации он готовит текст как ответственный автор.
-- Для нового или существенно изменённого видимого экрана, компонента или пользовательского сценария подготовь UX-прототип до frontend-разработки и выполни обязательную UI/E2E-проверку после реализации согласно `AGENTS.md`.
-- Для нового приложения или изменения эксплуатационных ожиданий укажи в задаче целевой профиль: локальный прототип/MVP либо production-кандидат/production. Уточняй требования соразмерно профилю; не заявляй production-готовность без проверок целевой среды.
+- Before starting, review the task, related requirements, and relevant documents. Create the task folder and `TASK.md` before delegating or editing, following `AGENTS.md` and `tickets/README.md`.
+- Keep changes within the scope of the task and the agreed areas of responsibility.
+- For a large task, define sequential stages and pass each stage's result to the next person responsible.
+- If an API, data schema, security, or infrastructure is affected, involve the corresponding owner.
+- For every task that changes application code or behavior, involve `technical-writer` as a required stage. For tasks involving contracts, operations, or user workflows, also assess the impact on instructions and help materials. The writer receives confirmed requirements and implementation facts, updates the relevant materials, or records in the report why no changes are needed. For a documentation-only task, the writer prepares the text as the responsible author.
+- For a new or substantially changed visible screen, component, or user workflow, prepare a UX prototype before frontend development and perform the required UI/E2E checks after implementation, as described in `AGENTS.md`.
+- For a new application or a change to operational expectations, specify the target profile in the task: local prototype/MVP or production candidate/production. Set requirements in proportion to the profile; do not claim production readiness without checks in the target environment.
 
-## Проверки
+## Checks
 
-После реализации каждое новое или изменённое поведение передаётся `unit-tester`: он пишет/обновляет unit-тесты, проверяет позитивные, негативные и граничные сценарии и запускает полный применимый unit-набор. Frontend/backend-разработчики передают точные пути production-кода и ожидаемые сценарии, но не добавляют новые unit-тесты.
+After implementation, hand every new or changed behavior to `unit-tester`: they write or update unit tests, check positive, negative, and edge-case scenarios, and run the full applicable unit test suite. Frontend and backend developers provide exact production code paths and expected scenarios, but do not add new unit tests.
 
-`technical-writer` проверяет инструкции и справку, затронутые изменением, и обновляет их после подтверждения поведения профильными владельцами. В задаче должен быть отчёт `TECHNICAL_WRITING_REPORT.md` с обновлёнными путями либо причиной, по которой правки не нужны.
+`technical-writer` reviews the instructions and help materials affected by the change and updates them after the relevant owners confirm the behavior. The task must include a `TECHNICAL_WRITING_REPORT.md` listing the updated paths or explaining why no changes were needed.
 
-Если `unit-tester` обнаружил, что прежний unit-тест стал несовместим с согласованным изменением, соответствующий разработчик может минимально адаптировать только этот существующий тест. Он не добавляет новые тест-кейсы и не удаляет проверки ради прохождения. `unit-tester` проверяет адаптацию и повторно запускает полный набор. Если прогон выявил дефект production-кода, исправление делает соответствующий разработчик, затем `unit-tester` проверяет регрессионное покрытие и повторно запускает тесты.
+If `unit-tester` finds that an existing unit test is no longer compatible with the agreed change, the relevant developer may make a minimal adjustment to that existing test only. They do not add new test cases or remove checks just to make the suite pass. `unit-tester` reviews the adjustment and reruns the full suite. If a test run reveals a defect in production code, the relevant developer fixes it, then `unit-tester` verifies the regression coverage and reruns the tests.
 
-Для любого изменения видимого поведения обязательны UI/E2E-тесты от `ui-tester`. API/integration- и другие специализированные проверки назначаются по изменённому контракту и рискам. Полный порядок и отчётность описывает `TESTING.md`.
+UI/E2E tests from `ui-tester` are required for any change to visible behavior. Assign API/integration and other specialized checks based on the changed contract and risks. `TESTING.md` describes the full process and reporting requirements.
 
-До завершения задачи приложи применимые отчёты `UNIT_TEST_REPORT.md` и `UI_TEST_REPORT.md` в папке задачи. В отчётах должны быть точные команды и фактические результаты. Если обязательную проверку нельзя выполнить, зафиксируй причину и непроверенные сценарии; задача остаётся незавершённой, а проверка — непройденной или заблокированной.
+Before completing the task, include the applicable `UNIT_TEST_REPORT.md` and `UI_TEST_REPORT.md` in the task folder. Reports must contain the exact commands and actual results. If a required check cannot be run, record the reason and the scenarios that remain unchecked; the task is still incomplete, and the check is failed or blocked.
 
-## Pull request и code review
+## Pull Requests and Code Review
 
-В описании PR укажи ссылку на папку задачи, цель изменения, основные затронутые области, проверки, риски и необходимые миграционные или эксплуатационные действия. Убедись, что применимые тестовые отчёты есть в папке задачи и все обязательные проверки прошли; иначе укажи блокер и не представляй задачу как завершённую. Ревьюер проверяет корректность, регрессии, безопасность, согласованность с архитектурой и достаточность проверок; замечания должны содержать путь, контекст и ожидаемое исправление.
+In the PR description, link to the task folder and state the purpose of the change, the main areas affected, checks performed, risks, and any required migration or operational actions. Confirm that the applicable test reports are in the task folder and that all required checks passed; otherwise, state the blocker and do not present the task as complete. The reviewer checks correctness, regressions, security, consistency with the architecture, and adequacy of the checks. Review comments must include the path, context, and expected fix.
 
-## Коммиты
+## Commits
 
-Репозиторий пока не задаёт формат сообщений коммитов. Не вводи новый обязательный формат без согласования. Не создавай и не отправляй коммиты без прямой просьбы пользователя.
+The repository does not yet define a commit message format. Do not introduce a new mandatory format without agreement. Do not create or push commits unless the user explicitly asks.

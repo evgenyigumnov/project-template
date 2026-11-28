@@ -1,36 +1,36 @@
 # API
 
-Контракт API фиксируется здесь по мере появления endpoint-ов. В текущем шаблоне конкретные маршруты и транспорт ещё не определены; не считай примеры или будущие разделы реализованным поведением.
+The API contract is documented here as endpoints are introduced. In the current template, specific routes and the transport have not yet been defined; do not treat examples or future sections as implemented behavior.
 
-Владелец документа и API-контракта — `backend-developer`. Изменения, влияющие на клиентскую интеграцию, согласуются с `frontend-developer`; изменения аутентификации и авторизации — с `security-engineer`.
+The owner of this document and the API contract is `backend-developer`. Changes that affect client integration are coordinated with `frontend-developer`; changes to authentication and authorization are coordinated with `security-engineer`.
 
-## Обзор
+## Overview
 
-- Назначение API: будет определено вместе с требованиями приложения.
-- Базовый URL, транспорт и версия: пока не определены.
+- API purpose: to be defined together with the application's requirements.
+- Base URL, transport, and version: not yet defined.
 
-## Общие правила
+## General Rules
 
-Для каждого endpoint-а документируй метод и путь, назначение, требования авторизации, параметры и тело запроса, успешные ответы, ошибки и ограничения совместимости. Указывай значения только после подтверждения реализацией или требованиями.
+For each endpoint, document the method and path, purpose, authorization requirements, request parameters and body, successful responses, errors, and compatibility constraints. Specify values only after they have been confirmed by the implementation or requirements.
 
-## Аутентификация и авторизация
+## Authentication and Authorization
 
-Пока не определены. После выбора механизма опиши здесь модель идентификации, требования к доступу и поведение при отказе в доступе, сверившись с `SECURITY.md`.
+Not yet defined. After selecting a mechanism, describe the identity model, access requirements, and behavior when access is denied here, consulting `SECURITY.md`.
 
-## Форматы запросов и ответов
+## Request and Response Formats
 
-Пока не определены. Зафиксируй принятые форматы, правила валидации, пагинации и представления дат, если они появятся в проекте.
+Not yet defined. Record the accepted formats, validation rules, pagination, and date representation if they are introduced in the project.
 
-## Ошибки
+## Errors
 
-Пока не определены. Для каждого типа ошибки укажи HTTP-статус (если применимо), стабильный код и безопасное для клиента описание. Не включай секреты или внутренние данные в ответы.
+Not yet defined. For each error type, specify the HTTP status (if applicable), a stable code, and a client-safe description. Do not include secrets or internal data in responses.
 
-## Endpoint-ы
+## Endpoints
 
-| Метод | Путь | Доступ | Назначение |
+| Method | Path | Access | Purpose |
 | --- | --- | --- | --- |
-| — | Endpoint-ы пока не описаны | — | — |
+| — | No endpoints documented yet | — | — |
 
-## Совместимость и изменения
+## Compatibility and Changes
 
-До выпуска API определи правила версионирования и поддержки клиентов. Несовместимые изменения согласуй с владельцами потребителей и отрази здесь до их реализации.
+Before releasing the API, define versioning and client support rules. Coordinate incompatible changes with consumer owners and document them here before implementation.

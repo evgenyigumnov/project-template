@@ -1,59 +1,61 @@
-# Шаблон проекта для Harness AI
+# Pi.dev Project Template
 
-Это стартовый шаблон для работы над проектом с Harness AI: готовые профили специализированных агентов в `.codex/agents/`, правила их работы и оркестрации, документы о качестве, тестировании, безопасности и развёртывании, а также заготовки для задач и UX/UI-прототипов. Скопируйте набор в репозиторий проекта и адаптируйте материалы под его цели, стек и команду.
+This is a starter template for working with [Pi](https://pi.dev): specialist project skills under `.pi/skills/`, rules for orchestrating child Pi processes, documents on quality, testing, security, and deployment, as well as templates for tasks and UX/UI prototypes. Copy the template into a repository and adapt the materials to its goals, stack, and team.
 
-## Начало работы с шаблоном
+## Getting Started with the Template
 
-1. Скопируйте шаблон в репозиторий проекта ( .md файлы, .codex, prototypes и tickets папки)
-2. Запустите Codex: `codex --yolo`
-3. В запущеном Codex опишите свою задачу
+1. Copy the template files, the `.pi/skills/`, `prototypes/`, and `tickets/` directories into the project root.
+2. Install Pi CLI and configure a provider by following the [official quickstart](https://docs.pi.dev/latest).
+3. Open the project root and launch `pi`, then describe the task. On first launch, Pi may ask you to trust project resources: allow them to load if you trust the template and its `.pi/skills/`.
+4. When a task requires assigned roles or multiple stages, the orchestrator creates a JSON plan and launches `.pi/skills/subtask-orchestrator/scripts/run_workflow.py`. Each step runs in a separate child Pi process with the assigned `--skill`; tasks without delegation run in the current Pi session.
 
+## Roles and Pi Skills
 
-## Содержит следующих агентов
+- [`analyst`](.pi/skills/analyst/SKILL.md) — analyzes requirements, business logic, the domain, and tasks.
+- [`architector`](.pi/skills/architector/SKILL.md) — designs system architecture and defines technical decisions and development standards.
+- [`planner`](.pi/skills/planner/SKILL.md) — studies the repository and maintains a plan for new projects and feature tasks.
+- [`frontend-developer`](.pi/skills/frontend-developer/SKILL.md) — develops the client side of the application, interfaces, and API integration.
+- [`backend-developer`](.pi/skills/backend-developer/SKILL.md) — develops server logic, APIs, and integrations.
+- [`database-developer`](.pi/skills/database-developer/SKILL.md) — designs database structures, writes migrations, and optimizes SQL queries.
+- [`devops`](.pi/skills/devops/SKILL.md) — configures servers, infrastructure, CI/CD, and application deployment.
+- [`security-engineer`](.pi/skills/security-engineer/SKILL.md) — reviews code, architecture, and infrastructure security, and identifies vulnerabilities.
+- [`ux-ui-expert`](.pi/skills/ux-ui-expert/SKILL.md) — designs user interfaces, prototypes, and interaction scenarios.
+- [`unit-tester`](.pi/skills/unit-tester/SKILL.md) — creates, maintains, and runs unit tests.
+- [`ui-tester`](.pi/skills/ui-tester/SKILL.md) — creates and runs UI/E2E tests and checks user scenarios.
+- [`technical-writer`](.pi/skills/technical-writer/SKILL.md) — writes and maintains documentation, help, guides, and instructions.
+- [`code-reviewer`](.pi/skills/code-reviewer/SKILL.md) — reviews code quality, adherence to standards, and correctness of changes.
+- [`subtask-orchestrator`](.pi/skills/subtask-orchestrator/SKILL.md) — plans multi-stage tasks and launches child Pi processes with assigned role skills.
 
-- [`analyst`](.codex/agents/analyst.toml) — анализирует требования, бизнес-логику, предметную область и задачи.
-- [`architector`](.codex/agents/architector.toml) — проектирует архитектуру системы, определяет технические решения и стандарты разработки.
-- [`planner`](.codex/agents/planner.toml) — изучает репозиторий и ведёт план для нового проекта и feature-задач.
-- [`frontend-developer`](.codex/agents/frontend-developer.toml) — разрабатывает клиентскую часть приложения, интерфейсы и интеграцию с API.
-- [`backend-developer`](.codex/agents/backend-developer.toml) — разрабатывает серверную логику, API и интеграции.
-- [`database-developer`](.codex/agents/database-developer.toml) — проектирует структуру БД, пишет миграции и оптимизирует SQL-запросы.
-- [`devops`](.codex/agents/devops.toml) — настраивает серверы, инфраструктуру, CI/CD и развёртывание приложений.
-- [`security-engineer`](.codex/agents/security-engineer.toml) — проверяет безопасность кода, архитектуры и инфраструктуры, выявляет уязвимости.
-- [`ux-ui-expert`](.codex/agents/ux-ui-expert.toml) — проектирует пользовательские интерфейсы, прототипы и сценарии взаимодействия.
-- [`unit-tester`](.codex/agents/unit-tester.toml) — создаёт, поддерживает и запускает модульные тесты.
-- [`ui-tester`](.codex/agents/ui-tester.toml) — создаёт и запускает UI/E2E-тесты, проверяет пользовательские сценарии.
-- [`technical-writer`](.codex/agents/technical-writer.toml) — пишет и поддерживает документацию, справку, руководства и инструкции.
-- [`code-reviewer`](.codex/agents/code-reviewer.toml) — проверяет качество кода, соблюдение стандартов и корректность изменений.
+## Documents Included in This Template
 
-## Содержит следующие документы
+Documents already included in the template:
 
-Документы, уже включённые в шаблон:
+- [`AGENTS.md`](AGENTS.md) — orchestration rules, role assignment, and required checks.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — development, verification, and review process.
+- [`CONVENTIONS.md`](CONVENTIONS.md) — general coding conventions and architectural boundaries.
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) — target profiles, environments, and deployment requirements.
+- [`SECURITY.md`](SECURITY.md) — secure development requirements and vulnerability-handling rules.
+- [`TESTING.md`](TESTING.md) — testing levels, run instructions, and reporting requirements.
+- [`API.md`](API.md) — API contract, if the application provides one.
+- [`tickets/README.md`](tickets/README.md) — task folder format, required materials, and conditions for reports; maintained by `analyst`.
+- [`prototypes/README.md`](prototypes/README.md) — structure and rules for preparing UX/UI prototypes.
+- [`.pi/skills/subtask-orchestrator/references/plan-format.md`](.pi/skills/subtask-orchestrator/references/plan-format.md) — JSON plan, role skill assignment, worker JSON report, and runner management.
 
-- [`AGENTS.md`](AGENTS.md) — правила оркестрации, назначения ролей и обязательных проверок.
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — порядок разработки, проверок и ревью.
-- [`CONVENTIONS.md`](CONVENTIONS.md) — общие соглашения по коду и архитектурным границам.
-- [`DEPLOYMENT.md`](DEPLOYMENT.md) — целевые профили, окружения и требования к развёртыванию.
-- [`SECURITY.md`](SECURITY.md) — требования безопасной разработки и работы с уязвимостями.
-- [`TESTING.md`](TESTING.md) — уровни тестирования, правила запуска и отчётности.
-- [`API.md`](API.md) — контракт API, если приложение его предоставляет.
-- [`tickets/README.md`](tickets/README.md) — формат папок задач, обязательные материалы и условия для отчётов; поддерживает `analyst`.
-- [`prototypes/README.md`](prototypes/README.md) — структура и правила подготовки UX/UI-прототипов.
+Documents that roles create or update as needed:
 
-Документы, которые агенты создают или обновляют по мере необходимости:
-
-- **`DOMAIN.md`, `BUSINESS_RULES.md`, `REQUIREMENTS.md`, `GLOSSARY.md`** — предметная область, бизнес-правила, требования и термины; ведёт `analyst`.
-- **`ARCHITECTURE.md`, `docs/adr/*.md`, `docs/DESIGN.md`** — архитектура, решения и описание дизайна системы; ведёт `architector`.
-- **`DATABASE.md`, `docs/DB_PERFORMANCE.md`** — схема данных, миграции и производительность БД; ведёт `database-developer`.
-- **`docs/UI_GUIDELINES.md`, `docs/USER_FLOWS.md`** — общие правила интерфейсов и повторно используемые пользовательские потоки; ведёт `ux-ui-expert`.
-- **`docs/UNIT_TESTING.md`, `docs/UI_TESTING.md`** — подробные соглашения по модульным и UI/E2E-тестам; ведут `unit-tester` и `ui-tester`.
-- **`README.md`, `docs/GETTING_STARTED.md`, `docs/USER_GUIDE.md`, `docs/HELP.md`, `docs/TROUBLESHOOTING.md`** — вводные инструкции, справка, руководства и помощь в устранении проблем; ведёт `technical-writer`.
-- **`docs/CODE_REVIEW.md`** — критерии ревью изменений; ведёт `code-reviewer`.
-- **`prototypes/<ID>-<slug>/README.md`** — описание экранов, действий, состояний и допущений для UX/UI-прототипа, если его удобно оформить в Markdown; готовит `ux-ui-expert`.
-- **`tickets/<ID>-<slug>/TASK.md`** — исходный запрос и контекст каждой задачи; создаёт оркестратор.
-- **`tickets/<ID>-<slug>/PLAN.md`** — этапы, зависимости и фактический прогресс по плану задачи; готовит и обновляет `planner` на основе подтверждённых результатов исполнителей.
-- **`tickets/<ID>-<slug>/ANALYSIS.md`** — анализ требований и предметной области; готовит `analyst`.
-- **`tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`** — сценарии, тесты, команды и результаты unit-проверок; готовит `unit-tester`.
-- **`tickets/<ID>-<slug>/UI_TEST_REPORT.md`** — сценарии, тесты, команды и результаты UI/E2E-проверок; готовит `ui-tester`.
-- **`tickets/<ID>-<slug>/TECHNICAL_WRITING_REPORT.md`** — проверенные источники, обновлённые документы или обоснование, почему правки не нужны; готовит `technical-writer`.
-- **`tickets/<ID>-<slug>/CODE_REVIEW.md`** — письменное ревью изменений, если оно поручено; готовит `code-reviewer`.
-- **`tickets/<ID>-<slug>/SECURITY_REVIEW.md`** — результаты проверки безопасности; готовит `security-engineer`.
+- **`DOMAIN.md`, `BUSINESS_RULES.md`, `REQUIREMENTS.md`, `GLOSSARY.md`** — domain, business rules, requirements, and terminology; maintained by `analyst`.
+- **`ARCHITECTURE.md`, `docs/adr/*.md`, `docs/DESIGN.md`** — system architecture, decisions, and design description; maintained by `architector`.
+- **`DATABASE.md`, `docs/DB_PERFORMANCE.md`** — data schema, migrations, and database performance; maintained by `database-developer`.
+- **`docs/UI_GUIDELINES.md`, `docs/USER_FLOWS.md`** — general interface guidelines and reusable user flows; maintained by `ux-ui-expert`.
+- **`docs/UNIT_TESTING.md`, `docs/UI_TESTING.md`** — detailed conventions for unit and UI/E2E testing; maintained by `unit-tester` and `ui-tester`.
+- **`README.md`, `docs/GETTING_STARTED.md`, `docs/USER_GUIDE.md`, `docs/HELP.md`, `docs/TROUBLESHOOTING.md`** — introductory instructions, help, guides, and troubleshooting; maintained by `technical-writer`.
+- **`docs/CODE_REVIEW.md`** — review criteria for changes; maintained by `code-reviewer`.
+- **`prototypes/<ID>-<slug>/README.md`** — description of screens, actions, states, and assumptions for a UX/UI prototype, if it is convenient to document it in Markdown; prepared by `ux-ui-expert`.
+- **`tickets/<ID>-<slug>/TASK.md`** — original request and context for each task; created by the orchestrator.
+- **`tickets/<ID>-<slug>/PLAN.md`** — stages, dependencies, and actual progress on the task plan; prepared and updated by `planner` based on confirmed results from implementers.
+- **`tickets/<ID>-<slug>/ANALYSIS.md`** — requirements and domain analysis; prepared by `analyst`.
+- **`tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`** — scenarios, tests, commands, and unit check results; prepared by `unit-tester`.
+- **`tickets/<ID>-<slug>/UI_TEST_REPORT.md`** — scenarios, tests, commands, and UI/E2E check results; prepared by `ui-tester`.
+- **`tickets/<ID>-<slug>/TECHNICAL_WRITING_REPORT.md`** — sources reviewed, documents updated, or the reason no changes were needed; prepared by `technical-writer`.
+- **`tickets/<ID>-<slug>/CODE_REVIEW.md`** — written review of changes, when assigned; prepared by `code-reviewer`.
+- **`tickets/<ID>-<slug>/SECURITY_REVIEW.md`** — security review results; prepared by `security-engineer`.

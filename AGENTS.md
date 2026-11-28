@@ -1,74 +1,75 @@
-# Правила работы с задачами и субагентами
+# Task Workflow and Pi Skills
 
-Главный агент (оркестратор) отвечает за постановку задачи, выбор специалистов, передачу контекста и проверку полноты результата. Перед началом реализации создай папку задачи по правилам `tickets/README.md` и положи туда `TASK.md` с исходным запросом пользователя. Не начинай делегирование и редактирование, пока этот контекст не сохранён.
+The main Pi session (the orchestrator) is responsible for defining the task, selecting specialists, handing off context, and checking that the result is complete. Before implementation, create a task folder according to `tickets/README.md` and put a `TASK.md` in it containing the user's original request. When the rules below require role assignments or a task has multiple stages, use the `.pi/skills/subtask-orchestrator/SKILL.md` skill: it launches a separate one-shot Pi process for each assigned skill, passes along context, and receives a structured report. Do not delegate or edit files until the task context has been saved.
 
-## Обязательные триггеры и этапы
+## Required Triggers and Stages
 
-1. Для каждой задачи, меняющей код или поведение приложения, подключи подходящих разработчиков, `unit-tester` и `technical-writer`. Разработчик реализует production-код и передаёт тестировщику затронутые пути и сценарии. `unit-tester` создаёт и обновляет unit-тесты для новой и изменённой логики, проверяет полноту покрытия и запускает полный применимый набор. `technical-writer` оценивает влияние изменения на инструкции, справку и руководства; после стабилизации поведения обновляет применимую документацию или фиксирует, почему правки не нужны. Для задач об изменении API/контрактов, данных, безопасности, инфраструктуры, эксплуатации или пользовательских сценариев также обязательно подключай `technical-writer`. Для задачи только по созданию или изменению документации он является автором соответствующего результата. Разработчик может точечно адаптировать только существующий тест, если `unit-tester` обнаружил, что он стал несовместим с согласованным изменением; тестировщик проверяет это изменение и повторно запускает набор.
-2. Для feature-задач, добавляющих возможности или заметно меняющих функциональность, а также для создания нового приложения или проекта, подключи `planner` после сохранения `TASK.md` и до передачи реализации разработчикам. Он изучает фактическую кодовую базу и применимые документы либо явно фиксирует отсутствие приложения/исходного кода, затем создаёт поэтапный план в `tickets/<ID>-<slug>/PLAN.md`. План содержит последовательность изменений, известные пути или предлагаемые новые области, ответственные роли, зависимости и критерии завершения. Для обычного bugfix планировщик обычно не нужен; оркестратор может назначить его, если исправление сложное, межмодульное или требует нескольких зависимых этапов.
-3. Исполнители этапов сообщают фактические изменения, точные пути и результаты проверок. После каждого этапа оркестратор передаёт этот результат назначенному `planner` и поручает обновить статусы, сделанное, отклонения и блокеры в `PLAN.md` до перехода к следующему этапу. Оркестратор проверяет актуальность плана при переходе между этапами и перед завершением тикета. Отмечай этап выполненным только при наличии подтверждения исполнителя; не записывай непроведённые проверки как успешные.
-4. Для нового или существенно изменённого видимого экрана, компонента либо пользовательского сценария подключи `ux-ui-expert` до frontend-разработки, если нет актуального согласованного прототипа. Результат храни в `prototypes/<ID>-<slug>/`; передай его пути frontend-разработчику и `ui-tester`. Для задач без видимого UI прототип не нужен.
-5. Для любого изменения видимого поведения или пользовательского потока подключи `ui-tester` после реализации. Он создаёт/обновляет UI/E2E-тесты и запускает полный применимый набор.
-6. Для изменений API, схемы данных, безопасности и инфраструктуры подключи владельцев этих областей. Учитывай зависимости: сначала аналитика, UX и согласование контрактов, затем реализация; тестировщики получают готовые изменённые пути и сценарии после реализации. Независимые проверки можно выполнять параллельно.
-7. Перед завершением проверь, что специалисты вернули отчёты и пути к артефактам. Разработчики указывают затронутые сценарии, пути production-кода и результаты сборки/статических проверок; unit-тесты и результаты их полного запуска подтверждает `unit-tester` в `tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`, UI/E2E — `ui-tester` в `tickets/<ID>-<slug>/UI_TEST_REPORT.md`, а проверку и обновление документации — `technical-writer` в `tickets/<ID>-<slug>/TECHNICAL_WRITING_REPORT.md`.
+1. For every task that changes application code or behavior, assign suitable developers, `unit-tester`, and `technical-writer`. The orchestrator creates one plan step for each role; the runner passes the skill name to the child Pi process through `--skill` and requires it to load the role instructions before starting work. The developer implements production code and gives the tester the affected paths and scenarios. `unit-tester` creates and updates unit tests for new and changed logic, checks coverage completeness, and runs the full applicable suite. `technical-writer` assesses the impact on instructions, help, and guides; after behavior stabilizes, they update the relevant documentation or record why no changes are needed. Also assign `technical-writer` for tasks changing APIs/contracts, data, security, infrastructure, operations, or user scenarios. For tasks only creating or changing documentation, the technical writer authors the result. A developer may make a targeted adjustment only to an existing test if `unit-tester` finds that it became incompatible with the agreed change; the tester reviews that adjustment and reruns the suite.
+2. For feature tasks that add capabilities or significantly change functionality, and for creating a new application or project, assign the `planner` role after saving `TASK.md` and before handing implementation to developers. Launch it as a separate Pi worker through the orchestrator skill. The planner studies the actual codebase and applicable documents, or explicitly records that no application/source code exists, then creates a staged plan in `tickets/<ID>-<slug>/PLAN.md`. The plan contains the sequence of changes, known paths or proposed areas, responsible roles, dependencies, and completion criteria. A planner is usually unnecessary for a routine bug fix; the orchestrator may assign one if the fix is complex, spans modules, or requires several dependent stages.
+3. Stage implementers report actual changes, exact paths, and verification results. After each stage, the orchestrator passes those results to the assigned `planner` and asks them to update statuses, completed work, deviations, and blockers in `PLAN.md` before proceeding to the next stage. The orchestrator checks that the plan is current when moving between stages and before closing the ticket. Mark a stage complete only when the implementer has confirmed its result; do not record checks that were not run as successful.
+4. For a new or substantially changed visible screen, component, or user scenario, assign `ux-ui-expert` before frontend development unless there is a current, approved prototype. Store the result in `prototypes/<ID>-<slug>/`; pass its path to the frontend developer and `ui-tester`. A prototype is not needed for tasks with no visible UI.
+5. For any change to visible behavior or a user flow, assign `ui-tester` after implementation. They create or update UI/E2E tests and run the full applicable suite.
+6. For changes to APIs, data schemas, security, or infrastructure, assign owners for those areas. Respect dependencies: do analysis, UX, and contract alignment first, then implementation; testers receive the completed changed paths and scenarios after implementation. The workflow runner executes steps sequentially; declare dependencies so results from earlier roles are passed along, and do not assume parallel execution.
+7. Before completion, check that specialists have returned reports and artifact paths. Developers list affected scenarios, production-code paths, and build/static-check results; `unit-tester` confirms unit tests and their full run in `tickets/<ID>-<slug>/UNIT_TEST_REPORT.md`, `ui-tester` confirms UI/E2E checks in `tickets/<ID>-<slug>/UI_TEST_REPORT.md`, and `technical-writer` records the documentation review and updates in `tickets/<ID>-<slug>/TECHNICAL_WRITING_REPORT.md`.
 
-Не объявляй задачу полностью завершённой, если обязательные тесты отсутствуют или не запускались. Если их создание или запуск блокирует конкретная причина (например, отсутствующая зависимость или недоступный браузер), зафиксируй её в отчёте, укажи непроверенные сценарии и сообщи о незавершённой проверке; не представляй её как успешную.
+Do not declare a task fully complete if required tests are missing or have not been run. If a concrete reason blocks their creation or execution (for example, a missing dependency or unavailable browser), record it in the report, list untested scenarios, and state that verification is incomplete; do not present it as successful.
 
-## Целевой профиль и критерии качества
+## Target Profile and Quality Criteria
 
-- Для нового приложения и задач, меняющих эксплуатационные ожидания, зафиксируй в `TASK.md`, `ANALYSIS.md` или `DEPLOYMENT.md` целевой профиль: локальный прототип/MVP либо production-кандидат/production. Если целевой профиль не задан, явно запиши допущение и открытый вопрос; не выдавай локальную проверку за подтверждение production-готовности.
-- Не навязывай всем проектам один стек, архитектурный шаблон, набор слоёв или инфраструктуру. Оценивай границы по связности, понятности изменений и возможности независимо проверять логику; небольшим проектам разрешай компактную структуру с обоснованными исключениями.
-- Для production-кандидата требуй доказательства проверок, относящихся к выбранной среде и рискам: конфигурации, безопасности, выпуска, восстановления и наблюдаемости. Непроверенные области перечисляй как ограничения. Не объявляй приложение production-ready по одному статическому ревью исходников.
+- For a new application and tasks that change operational expectations, record the target profile in `TASK.md`, `ANALYSIS.md`, or `DEPLOYMENT.md`: local prototype/MVP or production candidate/production. If no target profile is specified, explicitly record the assumption and open question; do not present local checks as evidence of production readiness.
+- Do not impose one stack, architecture template, set of layers, or infrastructure on every project. Evaluate boundaries based on cohesion, clarity of changes, and the ability to test logic independently; allow smaller projects to use a compact structure with justified exceptions.
+- For a production candidate, require evidence of checks relevant to the selected environment and risks: configuration, security, release, recovery, and observability. List unverified areas as limitations. Do not declare an application production-ready based only on a static source review.
 
-## Папки задач и устойчивый контекст
+## Task Folders and Persistent Context
 
-- Формат папки: `tickets/<ID>-<short-slug>/`, например `tickets/1-task-manager/` или `tickets/APP-123-add-task-status/`. Сохраняй внешний ID из трекера; если его нет, назначь следующий свободный локальный числовой ID по правилам `tickets/README.md`.
-- В Git из каталога `tickets/` отслеживай только `tickets/README.md`. Не добавляй `tickets/<ID>-<slug>/` и его содержимое в индекс или коммиты.
-- Не добавляй `tickets/` в `.gitignore` или `.git/info/exclude`: материалы тикетов должны оставаться видны в `git status` как неотслеживаемые. Добавляй в индекс конкретные нужные файлы по явным путям; не используй `git add -A` или `git add tickets`, пока в рабочем дереве есть локальные тикеты. Перед коммитом проверь staged-пути и убери из индекса любые `tickets/<ID>-<slug>/`.
-- Slug — короткое описание задачи в lowercase kebab-case. Используй один и тот же ID и slug для папки задачи и связанной папки прототипа.
-- `TASK.md` обязателен и содержит исходный запрос, ID и короткое название. В этом же каталоге храни относящиеся к задаче анализ, тестовые отчёты, ревью и другие результаты согласно `tickets/README.md`.
-- Сначала изучи `TASK.md`, существующий анализ, отчёты ревью и связанные общие документы. Не перезаписывай существующие материалы задачи.
+- Folder format: `tickets/<ID>-<short-slug>/`, for example `tickets/1-task-manager/` or `tickets/APP-123-add-task-status/`. Preserve an external tracker ID; if none exists, assign the next available local numeric ID according to `tickets/README.md`.
+- In Git, track only `tickets/README.md` from the `tickets/` directory. Do not stage or commit `tickets/<ID>-<slug>/` or its contents.
+- Do not add `tickets/` to `.gitignore` or `.git/info/exclude`: ticket materials must remain visible as untracked files in `git status`. Stage only specific required files by explicit path; do not use `git add -A` or `git add tickets` while local tickets exist in the working tree. Before committing, check staged paths and remove any `tickets/<ID>-<slug>/` paths from the index.
+- A slug is a short description of the task in lowercase kebab-case. Use the same ID and slug for the task folder and its related prototype folder.
+- `TASK.md` is required and contains the original request, ID, and short title. Store related analysis, test reports, reviews, and other results in the same folder according to `tickets/README.md`.
+- First study `TASK.md`, existing analysis, review reports, and related shared documents. Do not overwrite existing task materials.
 
-## Субагенты и ответственность за файлы
+## Pi Skills and File Responsibilities
 
-| Субагент | Ответственность за файлы |
+| Pi skill / role | File responsibilities |
 | --- | --- |
 | analyst | DOMAIN.md, BUSINESS_RULES.md, REQUIREMENTS.md, GLOSSARY.md, `tickets/README.md`, `tickets/*/ANALYSIS.md` |
 | architector | ARCHITECTURE.md, CONVENTIONS.md, docs/adr/*.md, docs/DESIGN.md |
-| frontend-developer | исходный код клиентской части, UI, клиентское состояние и интеграция с API, frontend-конфигурация/сборка/зависимости |
-| backend-developer | исходный код сервера, серверная логика, API.md и backend-конфигурация/сборка/зависимости |
-| database-developer | DATABASE.md, SQL-файлы, миграции БД, docs/DB_PERFORMANCE.md |
-| devops | DEPLOYMENT.md, инфраструктурные конфигурации, серверы, кластеры, CI/CD и развёртывание |
-| security-engineer | SECURITY.md, `tickets/*/SECURITY_REVIEW.md`, анализ безопасности кода и конфигураций |
+| frontend-developer | client-side source code, UI, client state and API integration, frontend configuration/build/dependencies |
+| backend-developer | server source code, server logic, API.md, and backend configuration/build/dependencies |
+| database-developer | DATABASE.md, SQL files, database migrations, docs/DB_PERFORMANCE.md |
+| devops | DEPLOYMENT.md, infrastructure configurations, servers, clusters, CI/CD, and deployment |
+| security-engineer | SECURITY.md, `tickets/*/SECURITY_REVIEW.md`, security analysis of code and configurations |
 | ux-ui-expert | `prototypes/**`, `prototypes/README.md`, docs/UI_GUIDELINES.md, docs/USER_FLOWS.md |
-| unit-tester | TESTING.md, docs/UNIT_TESTING.md, создание и сопровождение unit-тестов, аудит и запуск полного набора, `tickets/*/UNIT_TEST_REPORT.md` |
-| ui-tester | раздел UI/E2E в TESTING.md, UI/E2E-тесты, docs/UI_TESTING.md, `tickets/*/UI_TEST_REPORT.md` |
-| planner | создание и сопровождение поэтапного плана реализации в `tickets/*/PLAN.md` |
-| technical-writer | README.md, пользовательская и разработческая справка/руководства в docs/**, `tickets/*/TECHNICAL_WRITING_REPORT.md`; согласует формулировки профильных документов с их владельцами |
+| unit-tester | TESTING.md, docs/UNIT_TESTING.md, creating and maintaining unit tests, auditing and running the full suite, `tickets/*/UNIT_TEST_REPORT.md` |
+| ui-tester | UI/E2E section of TESTING.md, UI/E2E tests, docs/UI_TESTING.md, `tickets/*/UI_TEST_REPORT.md` |
+| planner | creating and maintaining staged implementation plans in `tickets/*/PLAN.md` |
+| technical-writer | README.md, user and developer help/guides in docs/**, `tickets/*/TECHNICAL_WRITING_REPORT.md`; coordinates wording in specialist documents with their owners |
 | code-reviewer | CONTRIBUTING.md, docs/CODE_REVIEW.md, `tickets/*/CODE_REVIEW.md` |
 
-Разработчики отвечают за production-код и передачу тестируемых сценариев; они не создают новые unit-тесты и не считают собственную проверку заменой отчёту `unit-tester`. Если после запуска тестов `unit-tester` выявляет несовместимость ранее существующего теста с согласованным изменением, разработчик может минимально адаптировать этот тест по обратной связи; `unit-tester` проверяет, что тест по-прежнему проверяет нужное поведение, и запускает полный набор повторно. Новые проверки для новой или изменённой логики пишет `unit-tester`. Если проверка выявляет дефект production-кода, тестировщик сообщает точные шаги, фактическое и ожидаемое поведение; исправление передаётся соответствующему разработчику.
+Developers are responsible for production code and handing off testable scenarios; they do not create new unit tests or treat their own checks as a substitute for the `unit-tester` report. If `unit-tester` finds after running tests that an existing test is incompatible with the agreed change, the developer may minimally adapt that test based on the tester's feedback; `unit-tester` checks that the test still covers the required behavior and reruns the full suite. `unit-tester` writes new checks for new or changed logic. If verification finds a production-code defect, the tester reports exact steps and actual and expected behavior; the fix is handed to the appropriate developer.
 
-## Структура проекта и общие артефакты
+## Project Structure and Shared Artifacts
 
-| Путь | Назначение |
+| Path | Purpose |
 | --- | --- |
-| `AGENTS.md` | Правила оркестрации, обязательные триггеры и карта ответственности. |
-| `.codex/agents/*.toml` | Профили и инструкции специализированных субагентов; профиль сам по себе не означает, что агент был назначен. |
-| `tickets/README.md` | Формат ID, имён папок задач и их обязательных/условных артефактов. |
-| `tickets/<ID>-<slug>/TASK.md` | Исходная формулировка запроса и контекст конкретной задачи. |
-| `tickets/<ID>-<slug>/PLAN.md` | Поэтапный план feature-задачи или создания нового проекта, включая статусы и фактический результат этапов; обновляет `planner` по подтверждённым результатам исполнителей. |
-| `API.md`, `ARCHITECTURE.md`, `DATABASE.md` | Контракт API, архитектура и схема данных, если соответствующие области есть в проекте. Создавай архитектурную и базовую документацию по данным, когда проекту это действительно нужно; не предполагай, что необязательные файлы уже существуют. |
-| `CONTRIBUTING.md`, `CONVENTIONS.md` | Правила разработки и технические соглашения. |
-| `DEPLOYMENT.md`, `SECURITY.md` | Правила эксплуатации, развёртывания и безопасности. |
-| `TESTING.md` | Обязательные уровни проверок, правила запуска и отчётности. |
-| `prototypes/<ID>-<slug>/` | UX/UI-прототип и материалы сценария для задачи с новым или существенно изменённым пользовательским интерфейсом. |
-| Каталоги исходного кода, тестов и миграций | Определяются фактической структурой приложения и его конфигурацией; изучи её и создай минимально нужную структуру, если проект пустой. |
+| `AGENTS.md` | Orchestration rules, required triggers, and responsibility map. |
+| `.pi/skills/<role>/SKILL.md` | Specialist role instructions passed by the runner to a separate Pi worker through `--skill`. The presence of a skill does not mean that the role has been assigned. |
+| `.pi/skills/subtask-orchestrator/` | Orchestrator skill: plan format, runner that creates a separate Pi process for each step, and result handoff rules. |
+| `tickets/README.md` | ID format, task-folder naming, and required/conditional artifacts. |
+| `tickets/<ID>-<slug>/TASK.md` | Original request and context for a specific task. |
+| `tickets/<ID>-<slug>/PLAN.md` | Staged plan for a feature task or new project, including statuses and actual stage results; the `planner` updates it based on confirmed implementer results. |
+| `API.md`, `ARCHITECTURE.md`, `DATABASE.md` | API contract, architecture, and data schema, when those areas exist in the project. Create architecture and data documentation when the project needs it; do not assume optional files already exist. |
+| `CONTRIBUTING.md`, `CONVENTIONS.md` | Development rules and technical conventions. |
+| `DEPLOYMENT.md`, `SECURITY.md` | Operational, deployment, and security requirements. |
+| `TESTING.md` | Required verification levels, run instructions, and reporting. |
+| `prototypes/<ID>-<slug>/` | UX/UI prototype and scenario materials for a task with a new or substantially changed user interface. |
+| Source-code, test, and migration directories | Determined by the application's actual structure and configuration; study it and create only the minimum necessary structure if the project is empty. |
 
-## Передача контекста и отчёты
+## Context Handoff and Reports
 
-- Перед началом работы прочитай `TASK.md`, относящиеся к задаче материалы и применимые профильные документы, включая `CONTRIBUTING.md`, `CONVENTIONS.md`, `DEPLOYMENT.md`, `SECURITY.md`, `TESTING.md`, `API.md`, `ARCHITECTURE.md` и `DATABASE.md`, если они существуют и относятся к проекту. Не создавай архитектурные или database-документы только ради наличия файла; добавляй их, когда в них есть устойчивые решения или требования, которые нужно поддерживать.
-- Если для feature-задачи или создания проекта подключён `planner`, перед реализацией изучи его `PLAN.md`; по завершении этапов передавай фактические результаты для обновления плана и проверяй, что статусы подтверждены. Обычный bugfix не требует плана, если оркестратор не назначил `planner` из-за сложности или нескольких зависимых этапов.
-- Каждый субагент возвращает оркестратору изменённые пути, принятые решения, точные команды и результаты проверок, открытые вопросы и блокеры. Рекомендация привлечь другую роль включает её название, подзадачу, ожидаемый результат и зависимости; решение принимает оркестратор.
-- Оркестратор сохраняет устойчивые решения и отчёты в предусмотренных файлах задачи и обновляет профильные общие документы. Не оставляй важный контекст только в переписке и не дублируй один источник истины.
-- Не коммить и не отправляй изменения без прямой просьбы пользователя.
+- Before starting, read `TASK.md`, task-related materials, and applicable specialist documents, including `CONTRIBUTING.md`, `CONVENTIONS.md`, `DEPLOYMENT.md`, `SECURITY.md`, `TESTING.md`, `API.md`, `ARCHITECTURE.md`, and `DATABASE.md`, if they exist and apply to the project. Do not create architecture or database documents just to have the files; add them when they contain lasting decisions or requirements that need to be maintained.
+- If a `planner` is assigned for a feature task or new project, study its `PLAN.md` before implementation; after stages finish, pass actual results for plan updates and confirm that statuses are supported by evidence. A routine bug fix does not need a plan unless the orchestrator assigned a `planner` because of its complexity or dependent stages.
+- Each child Pi worker returns changed paths, decisions, exact commands and verification results, open questions, and blockers to the orchestrator in the agreed JSON format. A recommendation to involve another role includes its name, task, expected result, and dependencies; the orchestrator decides whether to assign it.
+- The orchestrator records persistent decisions and reports in the designated task files and updates relevant shared documents. Do not leave important context only in the conversation or duplicate a single source of truth.
+- Do not commit or push changes without the user's direct request.

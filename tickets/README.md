@@ -1,61 +1,61 @@
-# Папки задач и тикетов
+# Task and Ticket Folders
 
-Этот каталог хранит контекст конкретных задач. До начала анализа или реализации оркестратор создаёт для задачи отдельную папку и сохраняет в ней исходное описание. Не оставляй номер и требования задачи только в переписке.
+This directory stores context for individual tasks. Before starting analysis or implementation, the orchestrator creates a separate folder for the task and saves the original description in it. Do not leave the task number and requirements only in the conversation.
 
-## Хранение в Git
+## Git Tracking
 
-В репозитории отслеживается только этот `README.md`. Каталоги и файлы отдельных тикетов не добавляй в коммиты и не вноси в `.gitignore` или `.git/info/exclude`: новые материалы должны оставаться видны в `git status` как неотслеживаемые. Пока в рабочем дереве есть локальные тикеты, не используй `git add -A` или `git add tickets`; добавляй в индекс только нужные файлы по явным путям и перед коммитом проверяй staged-пути. Технической защиты от ручного добавления файлов тикета в индекс нет: если их добавить вручную, Git позволит включить их в коммит.
+Only this `README.md` is tracked in the repository. Do not add individual ticket directories or files to commits, and do not add them to `.gitignore` or `.git/info/exclude`: new materials must remain visible as untracked files in `git status`. While local tickets exist in the working tree, do not use `git add -A` or `git add tickets`; add only the required files to the index by their explicit paths, and check the staged paths before committing. There is no technical protection against manually adding ticket files to the index: if you add them manually, Git will allow them to be included in a commit.
 
-## Идентификатор и имя папки
+## ID and Folder Name
 
-Используй формат:
+Use this format:
 
 ```text
 tickets/<ID>-<short-slug>/
 ```
 
-- Если задача пришла из баг-трекера, сохрани его ID без изменений. Например, `APP-123` и задача «логин и список задач» дают `tickets/APP-123-login-and-task-list/`.
-- Если указан только номер, используй его как ID: задача № 1 «менеджер задач» даёт `tickets/1-task-manager/`.
-- Если ID не указан, оркестратор назначает следующий свободный последовательный локальный номер по уже существующим папкам. Не создавай параллельную папку для того же ID.
-- Краткое описание — 2–6 конкретных слов в нижнем регистре, разделённых дефисами. Используй латиницу; русский заголовок можно перевести или транслитерировать. Например, `APP-123-login-and-task-list`.
-- Если папка для этого ID уже существует, продолжай работу в ней. Не переименовывай папку при изменении формулировки задачи: ID остаётся главным идентификатором.
+- If the task came from an issue tracker, preserve its ID unchanged. For example, `APP-123` and the task “login and task list” result in `tickets/APP-123-login-and-task-list/`.
+- If only a number is specified, use it as the ID: task No. 1, “task manager,” results in `tickets/1-task-manager/`.
+- If no ID is specified, the orchestrator assigns the next available sequential local number based on the existing folders. Do not create a parallel folder for the same ID.
+- The short description should contain 2–6 specific words in lowercase, separated by hyphens. Use Latin characters; you may translate or transliterate a Russian title. For example, `APP-123-login-and-task-list`.
+- If a folder for this ID already exists, continue working in it. Do not rename the folder when the task wording changes: the ID remains the primary identifier.
 
-## Файлы задачи
+## Task Files
 
-`TASK.md` обязателен для каждой задачи. Создай его до передачи работы субагентам. Включи:
+`TASK.md` is required for every task. Create it before handing work to child Pi processes. Include:
 
-- ID и краткое название задачи;
-- источник ID: внешний трекер или локальная нумерация;
-- исходный запрос пользователя дословно;
-- проверяемые критерии приёмки, если их удалось определить. Отделяй подтверждённые требования от допущений и открытых вопросов.
+- the ID and a short task title;
+- the ID source: external tracker or local numbering;
+- the user's original request verbatim;
+- verifiable acceptance criteria, if they can be determined. Distinguish confirmed requirements from assumptions and open questions.
 
-Добавляй профильные артефакты, когда соответствующая работа выполняется:
+Add specialist artifacts when the corresponding work is performed:
 
-| Файл | Когда создавать | Владелец |
+| File | When to create | Owner |
 | --- | --- | --- |
-| `ANALYSIS.md` | Выполнялся анализ требований или предметной области | analyst |
-| `PLAN.md` | Планировщик подключён для feature-oriented задачи, нового проекта или отдельно назначенного крупного, межмодульного либо многоэтапного багфикса; содержит план и актуальный статус его этапов | planner |
-| `UNIT_TEST_REPORT.md` | Менялось поведение кода; фиксирует покрытие, файлы тестов, точные команды, результаты и ограничения запуска | unit-tester |
-| `UI_TEST_REPORT.md` | Менялось видимое поведение UI или пользовательский сценарий; фиксирует сценарии, файлы тестов, точные команды, результаты и ограничения запуска | ui-tester |
-| `TECHNICAL_WRITING_REPORT.md` | Изменялись код, поведение, API/контракты, эксплуатация, пользовательские сценарии или документация; фиксирует проверенные источники, обновлённые документы либо причину отсутствия правок, а также вопросы и ограничения | technical-writer |
-| `CODE_REVIEW.md` | Для задачи поручено письменное ревью | code-reviewer |
-| `SECURITY_REVIEW.md` | Выполнялась проверка безопасности | security-engineer |
+| `ANALYSIS.md` | Requirements or domain analysis was performed | analyst |
+| `PLAN.md` | A planner is assigned to a feature task, a new project, or a separately designated large, cross-module, or multi-stage bug fix; contains the plan and current status of its stages | planner |
+| `UNIT_TEST_REPORT.md` | Code behavior changed; records coverage, test files, exact commands, results, and execution limitations | unit-tester |
+| `UI_TEST_REPORT.md` | Visible UI behavior or a user scenario changed; records scenarios, test files, exact commands, results, and execution limitations | ui-tester |
+| `TECHNICAL_WRITING_REPORT.md` | Code, behavior, API/contracts, operations, user scenarios, or documentation changed; records reviewed sources, updated documents or why no edits were needed, as well as questions and limitations | technical-writer |
+| `CODE_REVIEW.md` | A written review was assigned for the task | code-reviewer |
+| `SECURITY_REVIEW.md` | A security review was performed | security-engineer |
 
-Если задача не добавляет и не меняет видимый экран, компонент или пользовательский сценарий, UX-прототип не нужен. Для нового или существенно изменённого видимого экрана, компонента или UI-сценария UX/UI-специалист готовит прототип в `prototypes/<ID>-<short-slug>/`; оркестратор указывает этот путь в `TASK.md` или `ANALYSIS.md`.
+A UX prototype is not needed if the task does not add or change a visible screen, component, or user scenario. For a new or substantially changed visible screen, component, or UI scenario, the UX/UI specialist prepares a prototype in `prototypes/<ID>-<short-slug>/`; the orchestrator records this path in `TASK.md` or `ANALYSIS.md`.
 
-### План работ (`PLAN.md`)
+### Work Plan (`PLAN.md`)
 
-Когда планировщик подключён согласно `AGENTS.md`, он изучает задачу и доступную кодовую базу, а затем создаёт `PLAN.md` в папке тикета до реализации. Обычный локальный багфикс сам по себе не требует планировщика; его можно подключить отдельно для крупного, межмодульного или многоэтапного исправления. Новый проект планируется даже при отсутствии исходного кода: в плане фиксируются отсутствие кодовой базы и доступные исходные материалы.
+When a planner is assigned according to `AGENTS.md`, they study the task and available codebase, then create `PLAN.md` in the ticket folder before implementation. A routine local bug fix does not by itself require a planner; one may be assigned separately for a large, cross-module, or multi-stage fix. A new project is planned even if no source code exists: the plan records the absence of a codebase and the available source materials.
 
-План должен содержать:
+The plan must contain:
 
-- краткие границы задачи, проверенные источники и вывод о состоянии кодовой базы; если исходников нет — явную запись об этом;
-- этапы в порядке выполнения, их задачи и результаты, ответственных исполнителей, зависимости и проверяемые критерии завершения;
-- текущий статус каждого этапа: `Не начат`, `В работе`, `Выполнен` или `Заблокирован`;
-- допущения, открытые вопросы и блокеры, если они влияют на последовательность или объём работ.
+- a brief scope, verified sources, and a conclusion about the state of the codebase; if no source code exists, state this explicitly;
+- stages in execution order, their tasks and outcomes, responsible implementers, dependencies, and verifiable completion criteria;
+- the current status of each stage: `Not started`, `In progress`, `Completed`, or `Blocked`;
+- assumptions, open questions, and blockers if they affect the sequence or scope of work.
 
-`PLAN.md` — изменяемая запись о ходе плана. Планировщик обновляет статусы после подтверждения результата этапа исполнителем или оркестратором и указывает проверяемые свидетельства (например, изменённые пути, отчёты и фактические результаты проверок). Если обнаружения меняют этапы или зависимости, планировщик записывает, что и почему изменено; выполненные шаги и прежние решения не стираются без объяснения. Заблокированный или скорректированный план не отмечается выполненным. Остальные тикетные отчёты сохраняют свои отдельные назначения и не заменяются `PLAN.md`.
+`PLAN.md` is an evolving record of progress. The planner updates statuses after an implementer or the orchestrator confirms a stage result and cites verifiable evidence (for example, changed paths, reports, and actual verification results). If findings change the stages or dependencies, the planner records what changed and why; completed steps and previous decisions are not erased without explanation. A blocked or revised plan is not marked completed. Other ticket reports retain their separate responsibilities and are not replaced by `PLAN.md`.
 
-Сами тесты храни в принятой в проекте структуре папке тестов, а не в `tickets/`. Общие правила и решения поддерживай в профильных документах; не копируй их в каждый тикет. Не помещай в тикет секреты, пароли или реальные персональные данные.
+Store tests in the project's established test-directory structure, not in `tickets/`. Maintain shared rules and decisions in the relevant documents; do not copy them into every ticket. Do not put secrets, passwords, or real personal data in a ticket.
 
-Критерии приёмки и статусы из `TASK.md` должны позволять оркестратору понять, какие профильные проверки обязательны и что ещё мешает завершить задачу. Отчёт о невыполненной проверке должен содержать конкретную причину; не отмечай её успешной.
+The acceptance criteria and statuses in `TASK.md` must let the orchestrator determine which specialist checks are required and what still prevents the task from being completed. A report of an unperformed check must state the specific reason; do not mark it as successful.

@@ -1,42 +1,42 @@
-# Соглашения разработки
+# Development Conventions
 
-Документ фиксирует общие соглашения о стиле кода, именовании и технических паттернах. Владелец — `architector`; frontend-developer и backend-developer сообщают о повторяющихся соглашениях своих частей, чтобы поддерживать единый источник правил.
+This document records general conventions for code style, naming, and technical patterns. The owner is `architector`; frontend-developer and backend-developer report recurring conventions in their areas to maintain a single source of truth.
 
-## Приоритет источников
+## Source priority
 
-1. Следуй действующим форматтерам, линтерам и конфигурации проекта.
-2. Сохраняй стиль и структуру ближайшего существующего кода.
-3. Если правила ещё не установлены, предложи минимальное соглашение и зафиксируй его здесь после согласования.
+1. Follow the project's current formatters, linters, and configuration.
+2. Preserve the style and structure of the nearest existing code.
+3. If conventions have not yet been established, propose a minimal convention and record it here after agreement.
 
-## Именование и структура
+## Naming and structure
 
-- Используй названия, которые ясно отражают назначение сущности.
-- Группируй код вокруг связной функциональности и сохраняй у каждого модуля понятную ответственность. Модулем может быть любой принятый в стеке уровень организации кода: функция, компонент, пакет, сервис или другой подходящий элемент.
-- Отделяй входные и внешние границы от правил приложения там, где это упрощает понимание и независимые изменения. Например, обработчик запроса, экран или команда обычно преобразует ввод, передаёт работу соответствующей логике и формирует результат; сложные правила и операции с внешними системами не должны незаметно скапливаться в одной точке входа.
-- Держи каждое бизнес-правило и инвариант в одном понятном месте. Не дублируй его между интерфейсом, обработчиком запроса и хранилищем данных; проверки на клиенте не заменяют проверку на доверенной серверной границе, если она есть.
-- Сохраняй границы между модулями явными: вызывающий код должен использовать предназначенный для этого интерфейс, а не менять внутреннее состояние другого модуля напрямую. Вводи дополнительные слои и абстракции только тогда, когда они дают понятную пользу — например, изолируют внешний ресурс, упрощают независимое изменение или делают сложную логику понятнее.
-- При ревью оценивай связность и стоимость изменений: если одна функция затрагивает много несвязанных модулей либо один модуль регулярно меняется по разным причинам, проверь, не смешаны ли в нём ответственности. Это сигнал к разбору, а не автоматическое требование к разделению.
-- Не создавай абстракции и дубликаты существующей логики без необходимости.
-- Число строк само по себе не определяет качество границ: компактный файл тоже может содержать несколько несвязанных сценариев, а длинный — одну цельную таблицу или спецификацию. Если файл заметно превышает примерно 500 строк, проверь его связность, число причин для изменения, понятность интерфейса и возможность независимо менять части. Не дели его механически и не вводи отдельные слои только ради размера.
+- Use names that clearly reflect the purpose of an entity.
+- Group code around cohesive functionality and give each module a clear responsibility. A module can be any organizational unit accepted by the stack: a function, component, package, service, or another suitable element.
+- Separate entry points and external boundaries from application rules where this makes the code easier to understand and change independently. For example, a request handler, screen, or command usually transforms input, delegates work to the appropriate logic, and forms a result; complex rules and operations with external systems should not silently accumulate in one entry point.
+- Keep each business rule and invariant in one clear place. Do not duplicate it across the interface, request handler, and data store; client-side checks do not replace checks at a trusted server boundary, if one exists.
+- Keep module boundaries explicit: callers should use the interface intended for that purpose instead of directly changing another module's internal state. Add layers and abstractions only when they provide a clear benefit—for example, isolating an external resource, simplifying independent changes, or making complex logic easier to understand.
+- During review, assess coupling and the cost of changes: if one function affects many unrelated modules, or one module is regularly changed for different reasons, check whether its responsibilities are mixed. This is a signal to investigate, not an automatic requirement to split it.
+- Do not create abstractions or duplicate existing logic without a need.
+- Line count alone does not determine the quality of boundaries: a compact file can contain several unrelated workflows, while a long file can be one cohesive table or specification. If a file noticeably exceeds about 500 lines, review its cohesion, the number of reasons it changes, the clarity of its interface, and whether its parts can be changed independently. Do not split it mechanically or add separate layers just to reduce its size.
 
-## Проверка границ ответственности
+## Checking responsibility boundaries
 
-Перед завершением заметного изменения проверь применимые пункты и зафиксируй обоснованные исключения в описании изменения:
+Before completing a substantial change, check the applicable points below and record justified exceptions in the change description:
 
-- точки входа и адаптеры внешних систем остаются понятными координаторами сценария, а не контейнерами для всей логики приложения;
-- правила и переходы состояния принадлежат модулю, который отвечает за соответствующее поведение, и не расходятся между несколькими слоями;
-- работа с внешними системами и хранилищами выполняется через ясную границу, если отделение действительно помогает сопровождению или замене этой зависимости;
-- публичные интерфейсы модулей достаточно малы, чтобы вызывающая сторона не зависела от случайных деталей реализации;
-- структура соответствует масштабу задачи и использует естественные средства выбранного стека, без обязательного шаблона архитектуры для всех проектов.
+- Entry points and external-system adapters remain clear coordinators of a workflow, not containers for all application logic.
+- Rules and state transitions belong to the module responsible for the corresponding behavior and do not diverge across multiple layers.
+- Interactions with external systems and data stores go through a clear boundary when separation genuinely helps maintainability or makes the dependency easier to replace.
+- Public module interfaces are small enough that callers do not depend on incidental implementation details.
+- The structure fits the scale of the task and uses the natural tools of the chosen stack, without imposing one architecture pattern on every project.
 
-Это критерии для содержательного ревью, а не требование создавать отдельный слой для каждого пункта. Для небольшого скрипта, прототипа или компактного сервиса несколько обязанностей могут оставаться рядом, если они тесно связаны, их границы очевидны, а дальнейшее разделение добавило бы больше сложности, чем пользы.
+These are criteria for a substantive review, not a requirement to create a separate layer for every point. For a small script, prototype, or compact service, several responsibilities may remain together if they are closely related, their boundaries are clear, and further separation would add more complexity than value.
 
-## Ошибки, конфигурация и зависимости
+## Errors, configuration, and dependencies
 
-- Обрабатывай ошибки на уровне, который может безопасно восстановиться или сообщить полезный контекст.
-- Храни конфигурацию отдельно от логики; секреты не помещай в исходный код или репозиторий.
-- Добавляй зависимости только при обоснованной необходимости и учитывай их сопровождение и риски безопасности.
+- Handle errors at a level that can recover safely or communicate useful context.
+- Keep configuration separate from logic; do not put secrets in source code or the repository.
+- Add dependencies only when justified, and consider their maintenance and security risks.
 
-## Отклонения
+## Deviations
 
-Если задаче требуется отступить от принятого соглашения, укажи причину в изменении и при необходимости предложи обновить этот документ.
+If a task requires deviating from an accepted convention, state the reason in the change and, if needed, propose updating this document.
